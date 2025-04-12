@@ -1,0 +1,41 @@
+@mixin prefix($property, $value, $prefixes)
+  @each $prefix in $prefixes
+    -#{$prefix}-#{$property}: $value
+  #{$property}: $value
+
+.cup-container
+   @include prefix(transition, transform .6s, webkit moz ms o)
+
+.cup-container.jump, .cup-container.can-jump-on-hover:hover
+  @include prefix(transform, translateY(-26px), webkit moz ms o)
+
+.choose-cup
+  font-size: 32px
+  font-weight: 300
+
+.ball-container
+  position: relative
+  width: auto
+  min-width: 24px
+  height: 24px
+  display: flex
+  align-items: center
+  justify-content: center
+  margin-left: auto
+  margin-right: auto
+  transform: translateY(62px)
+  z-index: -1
+
+.ball-image
+  width: 24px
+  height: 24px
+  object-fit: contain
+
+.ball-label
+  position: absolute
+  left: 50%
+  top: 50%
+  transform: translate(-50%, -50%)
+  color: black
+  font-size: 12px
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5)

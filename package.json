@@ -1,0 +1,43 @@
+{
+  "name": "cup-game",
+  "author": "RavioSoft",
+  "version": "1.0.0",
+  "description": "Cup game",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "test": "./node_modules/.bin/eslint ./pages/index.tsx"
+  },
+  "dependencies": {
+    "@zeit/next-sass": "^1.0.1",
+    "iota-array": "^1.0.0",
+    "next": "^9.2.1",
+    "node-sass": "^4.13.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-flip-toolkit": "^7.0.7",
+    "react-icons": "^2.2.7",
+    "react-input-slider": "^5.1.4",
+    "react-localization": "^1.0.15",
+    "react-modal": "^3.11.1",
+    "react-rewards": "^1.1.1",
+    "react-select": "^3.0.8",
+    "shuffle-array": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.1",
+    "@types/react": "^16.9.19",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.18.3",
+    "rollup": "^1.26.3",
+    "typescript": "^3.7.5"
+  },
+  "optionalDependencies": {
+    "fsevents": "^1.2.13"
+  }
+}
