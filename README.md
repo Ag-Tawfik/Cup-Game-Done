@@ -4,6 +4,8 @@
 
 Cup game you can play if you get bored :)
 
+**Play it here: <https://ag-tawfik.github.io/Cup-Game-Done/>**
+
 Each cup hides a ball worth a number of GB. Every ball is shown once, the cups
 are shuffled, and you pick one to win its GB.
 
