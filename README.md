@@ -41,4 +41,12 @@ npm run build
 ```
 
 Serve `out/` with any static file server, for example `npx serve out`.
-To host under a sub-path (such as GitHub Pages), set `NEXT_PUBLIC_BASE_PATH=/repo-name` when building.
+To host under a sub-path, set `NEXT_PUBLIC_BASE_PATH=/repo-name` when building.
+
+## Deployment
+
+Every push to `master` runs the checks and deploys the static export to
+GitHub Pages at <https://ag-tawfik.github.io/Cup-Game-Done/> via
+`.github/workflows/deploy.yml`. The repository's Pages source must be set to
+"GitHub Actions" (Settings → Pages); the workflow attempts to enable this on
+its first run.
