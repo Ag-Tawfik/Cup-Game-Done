@@ -1,26 +1,20 @@
 import React from 'react'
-import SettingIcon from 'react-icons/lib/md/settings'
-import '../styles/shadows.sass'
+import { MdSettings } from 'react-icons/md'
+import { t } from '../lang'
 
 interface Props {
-  open: Function
-}
-interface State {}
-
-
-class PreferencesEditToggler extends React.Component<Props, State> {
-  constructor(props) {
-    super(props)
-    this.state = { }
-  }
-
-  public render() {
-    return(
-      <div onClick={() => this.props.open()} className="absolute right-0 bottom-0 dib ph3 pv2 bg-white mb3 mr3 light-shadow">
-        <SettingIcon />
-      </div>
-    )
-  }
+  open: () => void
 }
 
-export default PreferencesEditToggler
+export default function PreferencesEditToggler({ open }: Props) {
+  return (
+    <button
+      type="button"
+      aria-label={t('preferences')}
+      onClick={open}
+      className="absolute right-0 bottom-0 dib ph3 pv2 bg-white bn mb3 mr3 light-shadow pointer"
+    >
+      <MdSettings />
+    </button>
+  )
+}

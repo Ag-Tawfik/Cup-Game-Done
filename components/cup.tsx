@@ -1,25 +1,23 @@
 import React from 'react'
+import { asset } from '../lib/assets'
 
 interface Props {
-  select: Function,
   cupKey: number
-}
-interface State {}
-
-
-class Cup extends React.Component<Props, State> {
-  constructor(props) {
-    super(props)
-    this.state = { }
-  }
-
-  public render() {
-    return(
-      <div style={{ order: this.props.cupKey }} onClick={() => this.props.select(this.props.cupKey)} className="dib w3 mh2 cup">
-        <img src={process.env.baseURL + '/images/cup.png' } />
-      </div>
-    )
-  }
+  select: (cupKey: number) => void
+  disabled: boolean
 }
 
-export default Cup
+export default function Cup({ cupKey, select, disabled }: Props) {
+  return (
+    <button
+      type="button"
+      aria-label={`Cup ${cupKey}`}
+      disabled={disabled}
+      onClick={() => select(cupKey)}
+      className="dib w3 mh2 cup bn bg-transparent pa0 pointer"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={asset('/images/cup.png')} alt="" />
+    </button>
+  )
+}

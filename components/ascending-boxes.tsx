@@ -1,34 +1,23 @@
 import React from 'react'
-
-import '../styles/ascending-boxes.sass'
+import { asset } from '../lib/assets'
 
 interface Props {
   className?: string
 }
-interface State {}
 
-class CubeBackground extends React.Component<Props, State> {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
+const CUP_IMAGES = ['cup-1', 'cup-1', 'cup-1', 'cup-2', 'cup-2', 'cup-2', 'cup-3', 'cup-3', 'cup-3', 'cup-3']
 
-  public render() {
-    return <div className={ (this.props.className || "") + " area o-20"} >
+export default function AscendingBoxes({ className = '' }: Props) {
+  return (
+    <div className={`${className} area o-20`} aria-hidden="true">
       <ul className="circles">
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-1.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-1.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-1.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-2.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-2.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-2.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-3.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-3.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-3.svg' } /></li>
-        <li><img className="upside-down" src={ process.env.baseURL + '/images/cup-3.svg' } /></li>
+        {CUP_IMAGES.map((name, index) => (
+          <li key={index}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="upside-down" src={asset(`/images/${name}.svg`)} alt="" />
+          </li>
+        ))}
       </ul>
     </div>
-  }
+  )
 }
-
-export default CubeBackground

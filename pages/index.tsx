@@ -5,18 +5,15 @@ import Modal from 'react-modal'
 import AskPlay from '../components/ask-play'
 import GameBoard from '../components/game-board'
 import AscendingBoxes from '../components/ascending-boxes'
-import PreferencesEdit from '../components/preferences-edit'
-
-import lang from '../lang'
+import PreferencesEdit, { type Preferences } from '../components/preferences-edit'
 import PreferencesEditToggler from '../components/preferences-edit-toggler'
 import Score from '../components/score'
+
+import { getLanguage, setLanguage, t, type LanguageCode } from '../lang'
 import DEFAULT_VALUES from '../default.setting'
 
-
-import '../styles/main.sass'
-
 const PREFERENCES_EDIT_STYLE = {
-  content : {
+  content: {
     top: '50%',
     left: '50%',
     right: 'auto',
@@ -26,107 +23,95 @@ const PREFERENCES_EDIT_STYLE = {
   }
 }
 
-lang.setLanguage(DEFAULT_VALUES.lang)
+setLanguage(DEFAULT_VALUES.lang)
 
-interface Props {}
+type Props = Record<string, never>
 interface State {
-  score: number,
-  playing: boolean,
-  lastResultWasSuccess: boolean,
-  editingPreferences: boolean,
-  numberOfCups: number,
-  shuffleSpeed: number,
-  lang: string,
-  lastGBWon: number
+  score: number
+  playing: boolean
+  editingPreferences: boolean
+  /** GB won in the last round, or null before the first round finishes. */
+  lastGBWon: number | null
+  numberOfCups: number
+  shuffleIntervalMs: number
+  lang: LanguageCode
 }
 
 class Main extends React.Component<Props, State> {
-  constructor(props) {
-    super(props)
-    this.state = {
-      score: 0,
-      playing: false,
-      lastResultWasSuccess: null,
-      editingPreferences: false,
-      numberOfCups: DEFAULT_VALUES.numberOfCups,
-      shuffleSpeed: DEFAULT_VALUES.shuffleSpeed,
-      lang: lang.getLanguage(),
-      lastGBWon: 0
-    }
-    this.play = this.play.bind(this)
-    this.done = this.done.bind(this)
-    this.updatePreferences = this.updatePreferences.bind(this)
+  state: State = {
+    score: 0,
+    playing: false,
+    editingPreferences: false,
+    lastGBWon: null,
+    numberOfCups: DEFAULT_VALUES.numberOfCups,
+    shuffleIntervalMs: DEFAULT_VALUES.shuffleIntervalMs,
+    lang: getLanguage()
   }
 
-  private play() {
-    this.setState({
-      playing: true,
-      lastResultWasSuccess: null
-    })
+  private play = () => {
+    this.setState({ playing: true, lastGBWon: null })
   }
 
-  private done(success: boolean, gbValue: number) {
-    this.setState({
+  private done = (gbValue: number) => {
+    this.setState(prev => ({
       playing: false,
-      lastResultWasSuccess: success,
-      score: success ? this.state.score + gbValue : this.state.score,
-      lastGBWon: gbValue
-    })
+      lastGBWon: gbValue,
+      score: prev.score + gbValue
+    }))
   }
-  private updatePreferences(newPreferences: {
-    numberOfCups: number,
-    shuffleSpeed: number
-  }) {
+
+  private openPreferences = () => this.setState({ editingPreferences: true })
+  private closePreferences = () => this.setState({ editingPreferences: false })
+
+  private updatePreferences = (preferences: Preferences) => {
+    setLanguage(preferences.lang)
     this.setState({
-      ...newPreferences,
+      numberOfCups: preferences.numberOfCups,
+      shuffleIntervalMs: preferences.shuffleIntervalMs,
+      lang: preferences.lang,
       editingPreferences: false
     })
   }
 
   public render() {
-    return(
+    const { playing } = this.state
+    return (
       <div>
         <Head>
           <title>Cup Game</title>
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-          <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kalam" />
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" />
         </Head>
-        <div className={'absolute w-100 vh-100 bg-fade ' + (this.state.playing ? 'bg-transparent' : 'bg-near-black')}>
-          <div style={{ zIndex: -1 }} className="absolute w-100 h-75" >
+        <div className={'absolute w-100 vh-100 bg-fade ' + (playing ? 'bg-transparent' : 'bg-near-black')}>
+          <div style={{ zIndex: -1 }} className="absolute w-100 h-75">
             <AscendingBoxes />
           </div>
           <div className="w-100 h-100 flex items-center justify-center">
-            {
-              this.state.playing ?
-                <GameBoard
-                  numberOfCups={this.state.numberOfCups}
-                  shuffleSpeed={this.state.shuffleSpeed}
-                  done={this.done}
-                /> :
-                <AskPlay 
-                  success={this.state.lastResultWasSuccess} 
-                  play={this.play}
-                  gbWon={this.state.lastGBWon}
-                />
-            }
+            {playing ? (
+              <GameBoard
+                numberOfCups={this.state.numberOfCups}
+                shuffleIntervalMs={this.state.shuffleIntervalMs}
+                done={this.done}
+              />
+            ) : (
+              <AskPlay play={this.play} gbWon={this.state.lastGBWon} />
+            )}
           </div>
           <Score score={this.state.score} />
-          <PreferencesEditToggler open={() => this.setState({ editingPreferences: true }) } />
+          {/* Settings are locked during a round so they cannot reset a shuffled board. */}
+          {!playing && <PreferencesEditToggler open={this.openPreferences} />}
           <Modal
             ariaHideApp={false}
             isOpen={this.state.editingPreferences}
-            onRequestClose={() => this.setState({ editingPreferences: false })}
-            contentLabel="Préférences"
+            onRequestClose={this.closePreferences}
+            contentLabel={t('preferences')}
             style={PREFERENCES_EDIT_STYLE}
           >
             <PreferencesEdit
               done={this.updatePreferences}
-              cancel={() => this.setState({ editingPreferences: false })}
+              cancel={this.closePreferences}
               lang={this.state.lang}
               numberOfCups={this.state.numberOfCups}
-              shuffleSpeed={this.state.shuffleSpeed}
+              shuffleIntervalMs={this.state.shuffleIntervalMs}
             />
           </Modal>
         </div>

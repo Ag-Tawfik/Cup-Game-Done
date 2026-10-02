@@ -1,5 +1,7 @@
-export default {
+const DEFAULT_VALUES = {
   lang: 'en',
   numberOfCups: 3,
-  shuffleSpeed: 450
-}
+  shuffleIntervalMs: 450
+} as const
+
+export default DEFAULT_VALUES

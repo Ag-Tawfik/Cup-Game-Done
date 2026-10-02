@@ -1,43 +1,44 @@
 {
   "name": "cup-game",
   "author": "RavioSoft",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Cup game",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "dev": "next",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "export": "next export",
-    "test": "./node_modules/.bin/eslint ./pages/index.tsx"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run lint && npm run typecheck && npm test"
   },
   "dependencies": {
-    "@zeit/next-sass": "^1.0.1",
-    "iota-array": "^1.0.0",
-    "next": "^9.2.1",
-    "node-sass": "^4.13.1",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-flip-toolkit": "^7.0.7",
-    "react-icons": "^2.2.7",
-    "react-input-slider": "^5.1.4",
-    "react-localization": "^1.0.15",
-    "react-modal": "^3.11.1",
-    "react-rewards": "^1.1.1",
-    "react-select": "^3.0.8",
-    "shuffle-array": "^1.0.1"
+    "next": "^15.5.27",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-flip-toolkit": "^7.2.4",
+    "react-icons": "^5.7.0",
+    "react-modal": "^3.16.3",
+    "react-rewards": "^2.1.0",
+    "react-select": "^5.10.2",
+    "tachyons": "^4.12.0"
   },
   "devDependencies": {
-    "@types/node": "^13.7.1",
-    "@types/react": "^16.9.19",
-    "@typescript-eslint/eslint-plugin": "^2.19.2",
-    "@typescript-eslint/parser": "^2.19.2",
-    "eslint": "^6.8.0",
-    "eslint-plugin-react": "^7.18.3",
-    "rollup": "^1.26.3",
-    "typescript": "^3.7.5"
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/node": "^22.19.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/react-modal": "^3.16.3",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.27",
+    "sass": "^1.105.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
   },
-  "optionalDependencies": {
-    "fsevents": "^1.2.13"
+  "engines": {
+    "node": ">=20"
+  },
+  "overrides": {
+    "postcss": "^8.5.23"
   }
 }
