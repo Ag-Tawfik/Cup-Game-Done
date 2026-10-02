@@ -11,9 +11,14 @@ interface Props {
 }
 
 const REWARD_ANCHOR_ID = 'play-button-reward'
+const CONFETTI_COLORS = ['#de3d6b', '#26221d', '#f2b134', '#f5efe3']
 
 export default function AskPlay({ play, gbWon }: Props) {
-  const { reward } = useReward(REWARD_ANCHOR_ID, 'confetti')
+  const { reward } = useReward(REWARD_ANCHOR_ID, 'confetti', {
+    colors: CONFETTI_COLORS,
+    elementCount: 70,
+    spread: 70
+  })
 
   useEffect(() => {
     if (gbWon !== null) reward()
@@ -22,13 +27,13 @@ export default function AskPlay({ play, gbWon }: Props) {
   }, [])
 
   return (
-    <div className="tc">
+    <section className="tc" aria-labelledby="game-title">
       <div className="mv4">
-        <div className="f1 the-cup-game"><strong>THE CUP GAME</strong></div>
+        <h1 id="game-title" className="logo rise balance" style={{ animationDelay: '0s' }}>THE CUP GAME</h1>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="w3" src={asset('/images/cup.png')} alt="" />
+        <img className="w3 mt3 rise" style={{ animationDelay: '.1s' }} src={asset('/images/cup.png')} alt="" />
       </div>
-      <div className="mv4">
+      <div className="mv4 rise" style={{ animationDelay: '.2s' }}>
         <button className="get-started" onClick={play}>
           <span id={REWARD_ANCHOR_ID} />
           <span className="circle" aria-hidden="true">
@@ -36,10 +41,10 @@ export default function AskPlay({ play, gbWon }: Props) {
           </span>
           <span className="button-text">{t('play')}</span>
         </button>
-        <div className="mv3 white">
-          {gbWon !== null && <div>{t('rightSelection', { GB: gbWon })}</div>}
-        </div>
+        <p className="mv3 ink-soft tabular" aria-live="polite">
+          {gbWon !== null ? t('rightSelection', { GB: gbWon }) : ' '}
+        </p>
       </div>
-    </div>
+    </section>
   )
 }
