@@ -1,31 +1,30 @@
 import React from 'react'
-import Select, { type SingleValue } from 'react-select'
-import { getAvailableLanguages, type LanguageCode } from '../lang'
-
-interface Option {
-  label: string
-  value: LanguageCode
-}
-
-const OPTIONS: Option[] = getAvailableLanguages().map(code => ({
-  label: code.toUpperCase(),
-  value: code
-}))
+import { getAvailableLanguages, isLanguageCode, type LanguageCode } from '../lang'
 
 interface Props {
   lang: LanguageCode
   change: (lang: LanguageCode) => void
+  label: string
 }
 
-export default function LanguageSwitch({ lang, change }: Props) {
+const LANGUAGES = getAvailableLanguages()
+
+export default function LanguageSwitch({ lang, change, label }: Props) {
   return (
-    <Select<Option>
-      instanceId="language-switch"
-      menuPlacement="top"
-      value={OPTIONS.find(option => option.value === lang)}
-      isSearchable={false}
-      onChange={(option: SingleValue<Option>) => option && change(option.value)}
-      options={OPTIONS}
-    />
+    <select
+      aria-label={label}
+      className="w-100 pa2 ba b--black-20 br2 bg-white"
+      value={lang}
+      onChange={event => {
+        const code = event.target.value
+        if (isLanguageCode(code)) change(code)
+      }}
+    >
+      {LANGUAGES.map(code => (
+        <option key={code} value={code}>
+          {code.toUpperCase()}
+        </option>
+      ))}
+    </select>
   )
 }
