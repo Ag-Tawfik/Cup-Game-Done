@@ -11,6 +11,7 @@ import Score from '../components/score'
 
 import { getLanguage, setLanguage, t, type LanguageCode } from '../lang'
 import DEFAULT_VALUES from '../default.setting'
+import { asset } from '../lib/assets'
 
 const PREFERENCES_EDIT_STYLE = {
   content: {
@@ -80,6 +81,7 @@ class Main extends React.Component<Props, State> {
         <Head>
           <title>Cup Game</title>
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+          <link rel="icon" href={asset('/favicon.ico')} />
         </Head>
         <div className={'absolute w-100 vh-100 bg-fade ' + (playing ? 'bg-transparent' : 'bg-near-black')}>
           <div style={{ zIndex: -1 }} className="absolute w-100 h-75">
