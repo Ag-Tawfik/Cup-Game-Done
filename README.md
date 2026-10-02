@@ -1,5 +1,7 @@
 # Cup-Game
 
+[![CI](https://github.com/Ag-Tawfik/Cup-Game-Done/actions/workflows/ci.yml/badge.svg)](https://github.com/Ag-Tawfik/Cup-Game-Done/actions/workflows/ci.yml)
+
 Cup game you can play if you get bored :)
 
 Each cup hides a ball worth a number of GB. Every ball is shown once, the cups
