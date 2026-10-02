@@ -65,7 +65,7 @@ export default function PreferencesEdit(props: Props) {
       </div>
       <div>
         {t('lang')}<br />
-        <LanguageSwitch lang={lang} change={setLang} />
+        <LanguageSwitch lang={lang} change={setLang} label={t('lang')} />
       </div>
       <div className="mt4">
         <button onClick={save} className="ph3 pv2 mh3 bn bg-blue white light-shadow pointer">{t('save')}</button>
