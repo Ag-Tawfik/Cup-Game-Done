@@ -32,6 +32,26 @@ const CUP_SHOWING_DURATION_MS = 1000
 const DELAY_BEFORE_RESULT_FEEDBACK_MS = 800
 const TITLE_LETTER_STAGGER_S = 0.05
 
+/** Letters fade in one by one; words are kept unbreakable so lines wrap between words only. */
+function renderStaggeredTitle(text: string) {
+  let letterIndex = 0
+  return text.split(' ').map((word, wordIndex) => (
+    <React.Fragment key={`word-${wordIndex}`}>
+      {wordIndex > 0 && ' '}
+      <span className="word" aria-hidden="true">
+        {word.split('').map(char => {
+          const delay = `${letterIndex++ * TITLE_LETTER_STAGGER_S}s`
+          return (
+            <span key={`${wordIndex}-${letterIndex}`} style={{ animationDelay: delay }} className="dib fade-in">
+              {char}
+            </span>
+          )
+        })}
+      </span>
+    </React.Fragment>
+  ))
+}
+
 class GameBoard extends React.Component<Props, State> {
   state: State = {
     cups: createCups(this.props.numberOfCups),
@@ -110,21 +130,12 @@ class GameBoard extends React.Component<Props, State> {
     const canShuffle = phase === 'ready' || phase === 'shuffled'
 
     return (
-      <div className="relative">
+      <section className="relative" aria-label={t('chooseTheRightCup')}>
         <div className="tc pa4">
-          <h2 className="fw1 f1 lh-solid mb1 title" aria-label={t('chooseTheRightCup')}>
-            {t('chooseTheRightCup').split('').map((char, index) => (
-              <span
-                key={`chooseText-${index}`}
-                aria-hidden="true"
-                style={{ animationDelay: `${index * TITLE_LETTER_STAGGER_S}s` }}
-                className="dib fade-in"
-              >
-                {char === ' ' ? ' ' : char}
-              </span>
-            ))}
+          <h2 className="fw7 lh-solid mt0 mb2 title balance" aria-label={t('chooseTheRightCup')}>
+            {renderStaggeredTitle(t('chooseTheRightCup'))}
           </h2>
-          <p className="gray mw5 center">
+          <p className="rule-text ink-soft" aria-live="polite">
             {phase === 'revealing' ? t('revealing') : t('gameRuleGeneral')}
           </p>
           <div className="mv4">
@@ -154,15 +165,15 @@ class GameBoard extends React.Component<Props, State> {
           <div className="mt4">
             <button
               type="button"
-              className="bn bg-transparent f3 pointer"
+              className="btn btn-text f3"
               onClick={this.shuffle}
               disabled={!canShuffle}
             >
-              <MdShuffle /> {t('shuffle')}
+              <MdShuffle aria-hidden="true" /> {t('shuffle')}
             </button>
           </div>
         </div>
-      </div>
+      </section>
     )
   }
 }
