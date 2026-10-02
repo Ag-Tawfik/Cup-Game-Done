@@ -1,8 +1,11 @@
-/* eslint-disable */
-const withSass = require('@zeit/next-sass')
-module.exports = withSass({
+/** @type {import('next').NextConfig} */
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
+module.exports = {
+  reactStrictMode: true,
+  output: 'export',
+  basePath,
   env: {
-    baseURL: ''
-  },
-  /* config options here */
-})
+    NEXT_PUBLIC_BASE_PATH: basePath
+  }
+}

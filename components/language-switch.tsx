@@ -1,45 +1,31 @@
-
 import React from 'react'
-import Select from 'react-select'
-import lang from '../lang'
+import Select, { type SingleValue } from 'react-select'
+import { getAvailableLanguages, type LanguageCode } from '../lang'
 
-const languages = lang.getAvailableLanguages().map((langCode) => {
-  return {
-    label: langCode.toUpperCase(),
-    value: langCode
-  };
-});
+interface Option {
+  label: string
+  value: LanguageCode
+}
+
+const OPTIONS: Option[] = getAvailableLanguages().map(code => ({
+  label: code.toUpperCase(),
+  value: code
+}))
 
 interface Props {
-  change: Function,
-  lang: string
-}
-interface State { }
-
-class LanguageSwitch extends React.Component<Props, State> {
-  constructor(props) {
-    super(props)
-    this.state = {}
-    this.changeLang = this.changeLang.bind(this);
-  }
-
-  private changeLang(newLang) {
-    this.props.change(newLang.value.toLowerCase())
-  }
-
-  public render() {
-    return(
-      <div className="">
-        <Select
-          menuPlacement="top"
-          defaultValue={languages.find(lang => lang.value === this.props.lang)}
-          isSearchable={false}
-          onChange={this.changeLang}
-          options={languages}
-        />
-      </div>
-    );
-  }
+  lang: LanguageCode
+  change: (lang: LanguageCode) => void
 }
 
-export default LanguageSwitch;
+export default function LanguageSwitch({ lang, change }: Props) {
+  return (
+    <Select<Option>
+      instanceId="language-switch"
+      menuPlacement="top"
+      value={OPTIONS.find(option => option.value === lang)}
+      isSearchable={false}
+      onChange={(option: SingleValue<Option>) => option && change(option.value)}
+      options={OPTIONS}
+    />
+  )
+}

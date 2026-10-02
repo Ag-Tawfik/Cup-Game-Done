@@ -2,30 +2,41 @@
 
 Cup game you can play if you get bored :)
 
-## Installation
+Each cup hides a ball worth a number of GB. Every ball is shown once, the cups
+are shuffled, and you pick one to win its GB.
 
-Use the package manager [npm](https://www.npmjs.com/) to install this game.
+## Requirements
+
+Node.js 20 or newer.
+
+## Installation
 
 ```bash
 npm install
 ```
 
-## Usage
+## Development
 
 ```bash
 npm run dev
 ```
 
-## Test
+Open <http://localhost:3000> in your browser.
+
+## Checks
 
 ```bash
-npm run test
+npm run check   # lint + typecheck + unit tests
+npm test        # unit tests only
 ```
 
 ## Build
 
+The site is exported statically into `out/`:
+
 ```bash
-npm run build && npm run export
+npm run build
 ```
 
-Open on your browser <http://localhost:3000>
+Serve `out/` with any static file server, for example `npx serve out`.
+To host under a sub-path (such as GitHub Pages), set `NEXT_PUBLIC_BASE_PATH=/repo-name` when building.
