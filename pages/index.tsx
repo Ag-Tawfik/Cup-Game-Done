@@ -13,16 +13,8 @@ import { getLanguage, setLanguage, t, type LanguageCode } from '../lang'
 import DEFAULT_VALUES from '../default.setting'
 import { asset } from '../lib/assets'
 
-const PREFERENCES_EDIT_STYLE = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  }
-}
+const MODAL_CLASS = { base: 'prefs-modal', afterOpen: 'prefs-modal--open', beforeClose: '' }
+const OVERLAY_CLASS = { base: 'prefs-overlay', afterOpen: 'prefs-overlay--open', beforeClose: '' }
 
 setLanguage(DEFAULT_VALUES.lang)
 
@@ -77,46 +69,50 @@ class Main extends React.Component<Props, State> {
   public render() {
     const { playing } = this.state
     return (
-      <div>
+      <div className="screen">
         <Head>
           <title>Cup Game</title>
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+          <meta name="description" content="A small cup-and-ball game. Watch the balls, shuffle the cups, pick one to win its GB." />
+          <meta name="theme-color" content="#f5efe3" />
+          <meta property="og:title" content="Cup Game" />
+          <meta property="og:description" content="Watch the balls, shuffle the cups, pick one to win its GB." />
           <link rel="icon" href={asset('/favicon.ico')} />
         </Head>
-        <div className={'absolute w-100 vh-100 bg-fade ' + (playing ? 'bg-transparent' : 'bg-near-black')}>
-          <div style={{ zIndex: -1 }} className="absolute w-100 h-75">
-            <AscendingBoxes />
-          </div>
-          <div className="w-100 h-100 flex items-center justify-center">
-            {playing ? (
-              <GameBoard
-                numberOfCups={this.state.numberOfCups}
-                shuffleIntervalMs={this.state.shuffleIntervalMs}
-                done={this.done}
-              />
-            ) : (
-              <AskPlay play={this.play} gbWon={this.state.lastGBWon} />
-            )}
-          </div>
-          <Score score={this.state.score} />
-          {/* Settings are locked during a round so they cannot reset a shuffled board. */}
-          {!playing && <PreferencesEditToggler open={this.openPreferences} />}
-          <Modal
-            ariaHideApp={false}
-            isOpen={this.state.editingPreferences}
-            onRequestClose={this.closePreferences}
-            contentLabel={t('preferences')}
-            style={PREFERENCES_EDIT_STYLE}
-          >
-            <PreferencesEdit
-              done={this.updatePreferences}
-              cancel={this.closePreferences}
-              lang={this.state.lang}
+        <div className="backdrop">
+          <AscendingBoxes />
+        </div>
+        <div className="stage">
+          {playing ? (
+            <GameBoard
               numberOfCups={this.state.numberOfCups}
               shuffleIntervalMs={this.state.shuffleIntervalMs}
+              done={this.done}
             />
-          </Modal>
+          ) : (
+            <AskPlay play={this.play} gbWon={this.state.lastGBWon} />
+          )}
         </div>
+        <Score score={this.state.score} />
+        {/* Settings are locked during a round so they cannot reset a shuffled board. */}
+        {!playing && <PreferencesEditToggler open={this.openPreferences} />}
+        <Modal
+          ariaHideApp={false}
+          isOpen={this.state.editingPreferences}
+          onRequestClose={this.closePreferences}
+          contentLabel={t('preferences')}
+          className={MODAL_CLASS}
+          overlayClassName={OVERLAY_CLASS}
+          closeTimeoutMS={150}
+        >
+          <PreferencesEdit
+            done={this.updatePreferences}
+            cancel={this.closePreferences}
+            lang={this.state.lang}
+            numberOfCups={this.state.numberOfCups}
+            shuffleIntervalMs={this.state.shuffleIntervalMs}
+          />
+        </Modal>
       </div>
     )
   }

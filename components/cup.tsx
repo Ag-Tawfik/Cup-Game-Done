@@ -14,7 +14,7 @@ export default function Cup({ cupKey, select, disabled }: Props) {
       aria-label={`Cup ${cupKey}`}
       disabled={disabled}
       onClick={() => select(cupKey)}
-      className="dib w3 mh2 cup bn bg-transparent pa0 pointer"
+      className="dib w3 mh2 cup bn bg-transparent pa0"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={asset('/images/cup.png')} alt="" />
