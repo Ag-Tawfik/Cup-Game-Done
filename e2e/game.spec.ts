@@ -121,6 +121,22 @@ test.describe('settings and persistence', () => {
     await expect(stat(page, 'best')).toHaveText(score)
   })
 
+  test('Arabic flips the document to right-to-left and translates the UI', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Settings' }).click()
+    await page.getByRole('radio', { name: 'AR' }).check()
+    await page.locator('.prefs-modal button[type=submit]').click()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+    await expect(page.locator('dt').first()).toHaveText('النقاط')
+    await page.reload()
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+    await page.getByRole('button', { name: 'الإعدادات' }).click()
+    await page.getByRole('radio', { name: 'EN' }).check()
+    await page.locator('.prefs-modal button[type=submit]').click()
+    await expect(page.locator('html')).toHaveAttribute('dir', 'ltr')
+  })
+
   test('settings are unavailable during a round and Escape closes the dialog', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Settings' }).click()

@@ -167,7 +167,7 @@ button:focus-visible, select:focus-visible, input:focus-visible
 
 .chip-score
   top: 1rem
-  right: 1rem
+  inset-inline-end: 1rem
   gap: .9rem
   font-size: .95rem
   dl
@@ -187,7 +187,7 @@ button:focus-visible, select:focus-visible, input:focus-visible
 
 .chip-settings
   bottom: 1rem
-  right: 1rem
+  inset-inline-end: 1rem
   cursor: pointer
   border: 0
   transition: transform .18s ease, box-shadow .18s ease
@@ -316,6 +316,16 @@ input[type=range], select
     font-size: 1.4rem
     letter-spacing: .1em
     line-height: 1
+
+// Arabic: a font with Arabic glyphs (Kalam has none) and a mirrored Play arrow.
+html[lang='ar'] main
+  font-family: var(--font-arabic), 'Kalam', cursive
+
+html[dir='rtl'] .get-started .circle
+  transform: scaleX(-1)
+
+html[dir='rtl'] .get-started:active .circle
+  transform: scaleX(-1) scale(.98)
 
 @media (max-width: 420px)
   .chip-score
