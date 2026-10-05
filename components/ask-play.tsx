@@ -44,7 +44,7 @@ export default function AskPlay({ play, playDaily, dailyNumber, dailyResult, las
 
   const share = async () => {
     if (!dailyResult) return
-    const text = shareText(dailyNumber, dailyResult, shareUrl)
+    const text = shareText(t('shareLine', { N: dailyNumber, FOUND: dailyResult.found.filter(Boolean).length, TOTAL: dailyResult.found.length, POINTS: dailyResult.points }), dailyResult, shareUrl)
     try {
       if (typeof navigator.share === 'function' && navigator.canShare?.({ text })) {
         await navigator.share({ text })
@@ -96,7 +96,7 @@ export default function AskPlay({ play, playDaily, dailyNumber, dailyResult, las
             </button>
           </div>
         ) : (
-          <p className="mv3 ink-soft rule-text" aria-live="polite" data-result={lastResult ? (lastResult.won ? 'won' : 'lost') : ''}>
+          <p className="mv3 ink-soft rule-text result-text" aria-live="polite" data-result={lastResult ? (lastResult.won ? 'won' : 'lost') : ''}>
             {message}
           </p>
         )}

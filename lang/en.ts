@@ -23,7 +23,8 @@ const en = {
   dailyRound: 'Round {ROUND} of {TOTAL}',
   dailySummary: '{FOUND}/{TOTAL} found · {POINTS} pts',
   share: 'Share result',
-  copied: 'Copied'
+  copied: 'Copied',
+  shareLine: 'Cup Game #{N} · {FOUND}/{TOTAL} · {POINTS} pts'
 }
 
 export type Strings = typeof en

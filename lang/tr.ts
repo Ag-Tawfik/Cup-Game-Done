@@ -25,7 +25,8 @@ const tr: Strings = {
   dailyRound: '{ROUND}. tur / {TOTAL}',
   dailySummary: '{FOUND}/{TOTAL} bulundu · {POINTS} puan',
   share: 'Sonucu paylaş',
-  copied: 'Kopyalandı'
+  copied: 'Kopyalandı',
+  shareLine: 'Cup Game #{N} · {FOUND}/{TOTAL} · {POINTS} puan'
 }
 
 export default tr

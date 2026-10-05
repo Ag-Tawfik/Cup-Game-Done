@@ -321,6 +321,15 @@ input[type=range], select
 html[lang='ar'] main
   font-family: var(--font-arabic), 'Kalam', cursive
 
+// Tracking pulls joined Arabic letters apart, so none of it applies in Arabic.
+html[lang='ar'] .logo,
+html[lang='ar'] .title,
+html[lang='ar'] .get-started .button-text
+  letter-spacing: 0
+
+.result-text
+  margin-top: 1.25rem
+
 html[dir='rtl'] .get-started .circle
   transform: scaleX(-1)
 

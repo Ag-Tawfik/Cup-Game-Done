@@ -67,7 +67,7 @@ describe('daily plan', () => {
 
 describe('share text', () => {
   it('formats number, score and a result row', () => {
-    const text = shareText(7, { key: '2026-10-11', found: [true, true, false, true, false], points: 123 }, 'https://x.test/')
+    const text = shareText('Cup Game #7 · 3/5 · 123 pts', { key: '2026-10-11', found: [true, true, false, true, false], points: 123 }, 'https://x.test/')
     expect(text).toBe('Cup Game #7 · 3/5 · 123 pts\n🟩🟩🟥🟩🟥\nhttps://x.test/')
   })
 })
