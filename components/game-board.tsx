@@ -48,24 +48,43 @@ const LOSS_SHOW_BALL_MS = 1100
 const SETTLE_FALLBACK_MS = 900
 const TITLE_LETTER_STAGGER_S = 0.05
 
-/** Letters fade in one by one; words are kept unbreakable so lines wrap between words only. */
+/** Scripts whose letters join (Arabic, Syriac, N'Ko...) must stay in one text run, or every letter renders in its isolated form. */
+const JOINING_SCRIPT = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\u0700-\u074F\u07C0-\u07FF]/
+
+/**
+ * Staggered title. Latin-like scripts fade in letter by letter; joining scripts fade in word by word,
+ * because splitting their letters into separate boxes breaks the shaping that connects them.
+ * Words are always unbreakable so lines wrap between words only.
+ */
 function renderStaggeredTitle(text: string) {
-  let letterIndex = 0
-  return text.split(' ').map((word, wordIndex) => (
-    <React.Fragment key={`word-${wordIndex}`}>
-      {wordIndex > 0 && ' '}
-      <span className="word" aria-hidden="true">
-        {word.split('').map(char => {
-          const delay = `${letterIndex++ * TITLE_LETTER_STAGGER_S}s`
+  const perWord = JOINING_SCRIPT.test(text)
+  let unitIndex = 0
+  return text.split(' ').map((word, wordIndex) => {
+    const wordDelay = `${unitIndex * TITLE_LETTER_STAGGER_S * (perWord ? 3 : 1)}s`
+    const content = perWord
+      ? word
+      : word.split('').map(char => {
+          const delay = `${unitIndex++ * TITLE_LETTER_STAGGER_S}s`
           return (
-            <span key={`${wordIndex}-${letterIndex}`} style={{ animationDelay: delay }} className="dib fade-in">
+            <span key={`${wordIndex}-${unitIndex}`} style={{ animationDelay: delay }} className="dib fade-in">
               {char}
             </span>
           )
-        })}
-      </span>
-    </React.Fragment>
-  ))
+        })
+    if (perWord) unitIndex++
+    return (
+      <React.Fragment key={`word-${wordIndex}`}>
+        {wordIndex > 0 && ' '}
+        <span
+          className={perWord ? 'word fade-in' : 'word'}
+          style={perWord ? { animationDelay: wordDelay } : undefined}
+          aria-hidden="true"
+        >
+          {content}
+        </span>
+      </React.Fragment>
+    )
+  })
 }
 
 class GameBoard extends React.Component<Props, State> {

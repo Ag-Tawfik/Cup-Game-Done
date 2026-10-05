@@ -77,9 +77,8 @@ export function dailyRoundPoints(round: DailyRound, index: number): number {
   return round.numberOfCups * 10 + Math.round((1200 - round.shuffleIntervalMs) / 50) + index * 5
 }
 
-/** Text for the share button; emoji squares are safe in every chat app. */
-export function shareText(number: number, result: DailyResult, url: string): string {
-  const found = result.found.filter(Boolean).length
+/** Text for the share button: a localized headline, then emoji squares (safe in every chat app), then the URL. */
+export function shareText(headline: string, result: DailyResult, url: string): string {
   const row = result.found.map(ok => (ok ? '🟩' : '🟥')).join('')
-  return `Cup Game #${number} · ${found}/${result.found.length} · ${result.points} pts\n${row}\n${url}`
+  return `${headline}\n${row}\n${url}`
 }

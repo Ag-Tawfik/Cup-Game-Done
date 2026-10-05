@@ -25,7 +25,8 @@ const ar: Strings = {
   dailyRound: 'الجولة {ROUND} من {TOTAL}',
   dailySummary: 'وُجدت {FOUND}/{TOTAL} · {POINTS} نقطة',
   share: 'شارك النتيجة',
-  copied: 'تم النسخ'
+  copied: 'تم النسخ',
+  shareLine: 'لعبة الأكواب رقم {N} · {FOUND}/{TOTAL} · {POINTS} نقطة'
 }
 
 export default ar

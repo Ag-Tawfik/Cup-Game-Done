@@ -129,6 +129,11 @@ test.describe('settings and persistence', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
     await expect(page.locator('dt').first()).toHaveText('النقاط')
+    // Arabic letters must stay in one run per word so they connect; no per-letter boxes.
+    await startRoundInBrowser(page)
+    await expect(page.locator('h2.title .word')).toHaveCount(4)
+    await expect(page.locator('h2.title .word > span')).toHaveCount(0)
+    await expect(page.locator('h2.title .word').first()).toHaveText('أي')
     await page.reload()
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
     await page.getByRole('button', { name: 'الإعدادات' }).click()
