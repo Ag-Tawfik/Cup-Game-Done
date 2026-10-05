@@ -4,16 +4,22 @@ import { useReward } from 'react-rewards'
 import { t } from '../lang'
 import { asset } from '../lib/assets'
 
+export interface LastResult {
+  won: boolean
+  points: number
+  ballPosition: number
+}
+
 interface Props {
   play: () => void
-  /** GB won in the previous round, or null when no round has been played yet. */
-  gbWon: number | null
+  /** Outcome of the previous round, or null when no round has been played yet. */
+  lastResult: LastResult | null
 }
 
 const REWARD_ANCHOR_ID = 'play-button-reward'
 const CONFETTI_COLORS = ['#de3d6b', '#26221d', '#f2b134', '#f5efe3']
 
-export default function AskPlay({ play, gbWon }: Props) {
+export default function AskPlay({ play, lastResult }: Props) {
   const { reward } = useReward(REWARD_ANCHOR_ID, 'confetti', {
     colors: CONFETTI_COLORS,
     elementCount: 70,
@@ -21,10 +27,16 @@ export default function AskPlay({ play, gbWon }: Props) {
   })
 
   useEffect(() => {
-    if (gbWon !== null) reward()
+    if (lastResult?.won) reward()
     // Only fire once per mount: the component remounts after every round.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const message = lastResult
+    ? lastResult.won
+      ? t('won', { POINTS: lastResult.points })
+      : t('lost', { POS: lastResult.ballPosition })
+    : ' '
 
   return (
     <section className="tc" aria-labelledby="game-title">
@@ -41,8 +53,8 @@ export default function AskPlay({ play, gbWon }: Props) {
           </span>
           <span className="button-text">{t('play')}</span>
         </button>
-        <p className="mv3 ink-soft tabular" aria-live="polite">
-          {gbWon !== null ? t('rightSelection', { GB: gbWon }) : ' '}
+        <p className="mv3 ink-soft rule-text" aria-live="polite" data-result={lastResult ? (lastResult.won ? 'won' : 'lost') : ''}>
+          {message}
         </p>
       </div>
     </section>

@@ -16,6 +16,7 @@ export function isLanguageCode(value: string): value is LanguageCode {
 
 export function setLanguage(code: string): LanguageCode {
   current = isLanguageCode(code) ? code : 'en'
+  if (typeof document !== 'undefined') document.documentElement.lang = current
   return current
 }
 
@@ -25,6 +26,12 @@ export function getLanguage(): LanguageCode {
 
 export function getAvailableLanguages(): LanguageCode[] {
   return [...AVAILABLE]
+}
+
+/** Best supported language for a BCP 47 tag such as "tr-TR"; English otherwise. */
+export function languageFromLocale(locale: string | undefined): LanguageCode {
+  const primary = (locale ?? '').toLowerCase().split('-')[0]
+  return isLanguageCode(primary) ? primary : 'en'
 }
 
 /** Looks up a string in the current language, filling `{NAME}` placeholders. */

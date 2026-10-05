@@ -1,17 +1,22 @@
 const en = {
   play: 'Play',
-  score: 'Your score',
+  score: 'Score',
+  best: 'Best',
+  streak: 'Streak',
   preferences: 'Settings',
   numOfCup: 'Number of cups',
   shuffleInterval: 'Shuffle interval (lower is faster)',
   lang: 'Language',
   save: 'Save',
   cancel: 'Cancel',
-  rightSelection: 'You won {GB}GB!',
-  chooseTheRightCup: 'Select a cup to win GB',
+  resetScore: 'Reset score',
+  title: 'Which cup hides the ball?',
+  revealing: 'The ball is under cup {POS}. Keep your eye on it.',
+  gameRule: 'One ball, one cup. Shuffle, then pick the cup you think hides it. Streaks make it faster and worth more.',
   shuffle: 'Shuffle',
-  revealing: 'Watch where each ball is...',
-  gameRuleGeneral: 'Each cup hides a ball with a different Internet package. Shuffle, then pick a cup to win its GB!'
+  won: 'Found it. +{POINTS}',
+  lost: 'Wrong cup. The ball was under cup {POS}. Streak reset.',
+  cupLabel: 'Cup {POS} of {COUNT}'
 }
 
 export type Strings = typeof en

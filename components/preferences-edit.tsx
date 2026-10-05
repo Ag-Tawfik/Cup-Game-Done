@@ -20,6 +20,8 @@ export interface Preferences {
 interface Props extends Preferences {
   done: (preferences: Preferences) => void
   cancel: () => void
+  resetScore: () => void
+  canResetScore: boolean
 }
 
 export default function PreferencesEdit(props: Props) {
@@ -46,7 +48,7 @@ export default function PreferencesEdit(props: Props) {
       <label className="field" htmlFor="pref-cups">
         <span className="field-label">
           <span>{t('numOfCup')}</span>
-          <strong className="tabular">{numberOfCups}</strong>
+          <strong>{numberOfCups}</strong>
         </span>
         <input
           id="pref-cups"
@@ -63,7 +65,7 @@ export default function PreferencesEdit(props: Props) {
       <label className="field" htmlFor="pref-interval">
         <span className="field-label">
           <span>{t('shuffleInterval')}</span>
-          <strong className="tabular">{shuffleIntervalMs} ms</strong>
+          <strong>{shuffleIntervalMs} ms</strong>
         </span>
         <input
           id="pref-interval"
@@ -84,9 +86,18 @@ export default function PreferencesEdit(props: Props) {
         <LanguageSwitch id="pref-lang" lang={lang} change={setLang} />
       </div>
 
-      <div className="mt4 flex items-center" style={{ gap: '.75rem' }}>
+      <div className="mt4 flex items-center flex-wrap" style={{ gap: '.75rem' }}>
         <button type="submit" className="btn btn-primary">{t('save')}</button>
         <button type="button" onClick={props.cancel} className="btn btn-ghost">{t('cancel')}</button>
+        <button
+          type="button"
+          onClick={props.resetScore}
+          disabled={!props.canResetScore}
+          className="btn btn-text ml-auto"
+          style={{ marginLeft: 'auto' }}
+        >
+          {t('resetScore')}
+        </button>
       </div>
     </form>
   )

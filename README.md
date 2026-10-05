@@ -6,8 +6,11 @@ Cup game you can play if you get bored :)
 
 **Play it here: <https://ag-tawfik.github.io/Cup-Game-Done/>**
 
-Each cup hides a ball worth a number of GB. Every ball is shown once, the cups
-are shuffled, and you pick one to win its GB.
+One ball goes under one cup. You see where, the cups shuffle, and you pick the
+cup you think hides it. A correct pick scores points and extends your streak;
+a wrong one resets the streak. Longer streaks make the shuffle faster and
+longer, and pay more. Score, best score, best streak and settings are kept in
+your browser.
 
 ## Requirements
 
@@ -29,9 +32,15 @@ Open <http://localhost:3000> in your browser.
 
 ## Checks
 
+`npm run check` runs lint, typecheck and unit tests. `npm run test:e2e` builds the
+static export and drives it in headless Chromium (first run: `npx playwright install chromium`).
+
+### Scripts
+
 ```bash
-npm run check   # lint + typecheck + unit tests
-npm test        # unit tests only
+npm run check      # lint + typecheck + unit tests
+npm test           # unit tests only
+npm run test:e2e   # browser tests against the built export
 ```
 
 ## Build
@@ -52,3 +61,7 @@ GitHub Pages at <https://ag-tawfik.github.io/Cup-Game-Done/> via
 `.github/workflows/deploy.yml`. The repository's Pages source must be set to
 "GitHub Actions" (Settings → Pages); the workflow attempts to enable this on
 its first run.
+
+## License
+
+MIT. See `LICENSE`.
