@@ -15,7 +15,7 @@ import {
   startRound,
   type RoundState
 } from '../lib/round'
-import { intervalFor, shuffleStepsFor } from '../lib/scoring'
+import type { RandomSource } from '../lib/game'
 import Cup from './cup'
 
 export interface RoundResult {
@@ -26,8 +26,12 @@ export interface RoundResult {
 
 interface Props {
   numberOfCups: number
+  shuffleSteps: number
   shuffleIntervalMs: number
-  streak: number
+  /** Random source for ball placement and shuffles; a seeded one makes the round reproducible. */
+  random?: RandomSource
+  /** Free play lets you shuffle again; the daily challenge gives everyone exactly one shuffle. */
+  allowReshuffle?: boolean
   done: (result: RoundResult) => void
 }
 
@@ -35,6 +39,7 @@ interface State {
   round: RoundState
   /** Position announced during the reveal, kept so the text does not change mid-shuffle. */
   revealedPosition: number
+  shuffles: number
 }
 
 const REVEAL_DURATION_MS = 1400
@@ -66,8 +71,8 @@ function renderStaggeredTitle(text: string) {
 class GameBoard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    const round = startRound(props.numberOfCups)
-    this.state = { round, revealedPosition: ballPosition(round) }
+    const round = startRound(props.numberOfCups, props.random ?? Math.random)
+    this.state = { round, revealedPosition: ballPosition(round), shuffles: 0 }
   }
 
   private timers = new Set<ReturnType<typeof setTimeout>>()
@@ -95,16 +100,22 @@ class GameBoard extends React.Component<Props, State> {
     this.timers.add(timer)
   }
 
+  private canShuffle(): boolean {
+    const { phase } = this.state.round
+    if (phase === 'ready') return true
+    return phase === 'shuffled' && (this.props.allowReshuffle ?? true)
+  }
+
   private shuffle = () => {
-    const steps = shuffleStepsFor(this.props.streak)
-    const interval = intervalFor(this.props.shuffleIntervalMs, this.props.streak)
-    const next = beginShuffle(this.state.round, steps)
+    if (!this.canShuffle()) return
+    const next = beginShuffle(this.state.round, this.props.shuffleSteps)
     if (next === this.state.round) return
-    this.setState({ round: next })
+    this.setState(s => ({ round: next, shuffles: s.shuffles + 1 }))
+    const random = this.props.random ?? Math.random
 
     this.shuffleInterval = setInterval(() => {
       this.setState(
-        s => ({ round: shuffleStep(s.round) }),
+        s => ({ round: shuffleStep(s.round, random) }),
         () => {
           if (this.state.round.phase !== 'settling') return
           if (this.shuffleInterval !== null) clearInterval(this.shuffleInterval)
@@ -113,7 +124,7 @@ class GameBoard extends React.Component<Props, State> {
           this.after(SETTLE_FALLBACK_MS, this.settle)
         }
       )
-    }, interval)
+    }, this.props.shuffleIntervalMs)
   }
 
   private settle = () => {
@@ -141,7 +152,7 @@ class GameBoard extends React.Component<Props, State> {
     const { round, revealedPosition } = this.state
     const { phase, cups, openedCup } = round
     const canPick = phase === 'shuffled'
-    const canShuffle = phase === 'ready' || phase === 'shuffled'
+    const canShuffle = this.canShuffle()
     const showBall = phase === 'revealing' || phase === 'resolving'
     const status = phase === 'revealing' ? t('revealing', { POS: revealedPosition }) : t('gameRule')
 

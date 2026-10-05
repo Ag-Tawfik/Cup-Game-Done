@@ -18,7 +18,14 @@ const tr: Strings = {
   shuffle: 'Karıştır',
   won: 'Buldun. +{POINTS}',
   lost: 'Yanlış bardak. Top {POS}. bardağın altındaydı. Seri sıfırlandı.',
-  cupLabel: 'Bardak {POS} / {COUNT}'
+  cupLabel: 'Bardak {POS} / {COUNT}',
+  daily: 'Günlük #{N}',
+  dailyIntro: 'Beş tur, bugün herkes için aynı. Tek deneme.',
+  dailyPlayed: 'Bugün oynandı',
+  dailyRound: '{ROUND}. tur / {TOTAL}',
+  dailySummary: '{FOUND}/{TOTAL} bulundu · {POINTS} puan',
+  share: 'Sonucu paylaş',
+  copied: 'Kopyalandı'
 }
 
 export default tr

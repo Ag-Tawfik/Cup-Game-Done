@@ -16,7 +16,14 @@ const en = {
   shuffle: 'Shuffle',
   won: 'Found it. +{POINTS}',
   lost: 'Wrong cup. The ball was under cup {POS}. Streak reset.',
-  cupLabel: 'Cup {POS} of {COUNT}'
+  cupLabel: 'Cup {POS} of {COUNT}',
+  daily: 'Daily #{N}',
+  dailyIntro: 'Five rounds, the same for everyone today. One try.',
+  dailyPlayed: 'Played today',
+  dailyRound: 'Round {ROUND} of {TOTAL}',
+  dailySummary: '{FOUND}/{TOTAL} found · {POINTS} pts',
+  share: 'Share result',
+  copied: 'Copied'
 }
 
 export type Strings = typeof en
