@@ -1,7 +1,10 @@
 import en, { type Strings } from './en'
 import tr from './tr'
+import ar from './ar'
 
-const TABLES = { en, tr } satisfies Record<string, Strings>
+const TABLES = { en, tr, ar } satisfies Record<string, Strings>
+
+const RTL: ReadonlySet<string> = new Set(['ar'])
 
 export type LanguageCode = keyof typeof TABLES
 export type StringKey = keyof Strings
@@ -14,9 +17,16 @@ export function isLanguageCode(value: string): value is LanguageCode {
   return (AVAILABLE as string[]).includes(value)
 }
 
+export function isRightToLeft(code: LanguageCode): boolean {
+  return RTL.has(code)
+}
+
 export function setLanguage(code: string): LanguageCode {
   current = isLanguageCode(code) ? code : 'en'
-  if (typeof document !== 'undefined') document.documentElement.lang = current
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = current
+    document.documentElement.dir = isRightToLeft(current) ? 'rtl' : 'ltr'
+  }
   return current
 }
 

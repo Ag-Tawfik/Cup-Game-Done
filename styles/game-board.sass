@@ -1,6 +1,8 @@
 // Cups sit in one row at every width; size scales with the viewport so five fit on a phone.
 .cups
   display: flex
+  // Positions are physical, left to right, in every language, so daily results compare across players.
+  direction: ltr
   justify-content: center
   align-items: flex-end
   gap: clamp(.35rem, 2.5vw, 1rem)

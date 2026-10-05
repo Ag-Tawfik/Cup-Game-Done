@@ -88,9 +88,9 @@ export default function AskPlay({ play, playDaily, dailyNumber, dailyResult, las
         {dailyResult ? (
           <div className="daily-summary ui" data-daily-summary>
             <span className="squares" aria-hidden="true">{dailyResult.found.map(ok => (ok ? '🟩' : '🟥')).join('')}</span>
-            <span>
+            <bdi>
               {t('dailySummary', { FOUND: dailyResult.found.filter(Boolean).length, TOTAL: DAILY_ROUNDS, POINTS: dailyResult.points })}
-            </span>
+            </bdi>
             <button type="button" className="btn btn-primary" onClick={share} data-share>
               {copied ? t('copied') : t('share')}
             </button>
