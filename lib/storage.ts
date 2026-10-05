@@ -1,4 +1,5 @@
 import { clampNumberOfCups, clampShuffleInterval } from './game'
+import type { DailyResult } from './daily'
 
 export interface Persisted {
   score: number
@@ -8,6 +9,8 @@ export interface Persisted {
   numberOfCups: number
   shuffleIntervalMs: number
   lang: string
+  /** Result of the most recently completed daily challenge, if any. */
+  daily: DailyResult | null
 }
 
 const KEY = 'cup-game:v1'
@@ -30,7 +33,8 @@ export function load(defaults: Persisted, storage: Pick<Storage, 'getItem'> | nu
       bestStreak: nonNegativeInt(data.bestStreak, defaults.bestStreak),
       numberOfCups: clampNumberOfCups(nonNegativeInt(data.numberOfCups, defaults.numberOfCups)),
       shuffleIntervalMs: clampShuffleInterval(nonNegativeInt(data.shuffleIntervalMs, defaults.shuffleIntervalMs)),
-      lang: typeof data.lang === 'string' ? data.lang : defaults.lang
+      lang: typeof data.lang === 'string' ? data.lang : defaults.lang,
+      daily: validDaily(data.daily)
     }
   } catch {
     return { ...defaults }
@@ -44,6 +48,13 @@ export function save(data: Persisted, storage: Pick<Storage, 'setItem'> | null =
   } catch {
     // Private mode or quota: progress simply is not kept.
   }
+}
+
+function validDaily(value: unknown): DailyResult | null {
+  if (!value || typeof value !== 'object') return null
+  const d = value as Partial<DailyResult>
+  if (typeof d.key !== 'string' || !Array.isArray(d.found) || !d.found.every(x => typeof x === 'boolean')) return null
+  return { key: d.key, found: [...d.found], points: nonNegativeInt(d.points, 0) }
 }
 
 function safeStorage(): Storage | null {
