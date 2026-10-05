@@ -85,7 +85,7 @@ test.describe('settings and persistence', () => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Settings' }).click()
     await expect(page.locator('.prefs-modal--open')).toBeVisible()
-    await page.locator('.prefs-modal select').selectOption('tr')
+    await page.getByRole('radio', { name: 'TR' }).check()
     await page.locator('#pref-cups').fill('4')
     await page.locator('.prefs-modal button[type=submit]').click()
     await expect(page.locator('.prefs-modal')).toHaveCount(0)
@@ -108,7 +108,7 @@ test.describe('settings and persistence', () => {
 
     // Reopen, change only the interval, save: language must stay Turkish.
     await page.getByRole('button', { name: 'Ayarlar' }).click()
-    await expect(page.locator('.prefs-modal select')).toHaveValue('tr')
+    await expect(page.getByRole('radio', { name: 'TR' })).toBeChecked()
     await page.locator('#pref-interval').fill('300')
     await page.locator('.prefs-modal button[type=submit]').click()
     await expect(page.locator('html')).toHaveAttribute('lang', 'tr')

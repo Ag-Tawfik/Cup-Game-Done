@@ -213,15 +213,41 @@ input[type=range], select
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif
   font-size: .9rem
 
-.select
-  width: 100%
-  padding: .5rem .6rem
-  border: 1px solid rgba(var(--shadow-rgb), .25)
-  border-radius: .5rem
-  background: #fff
-  color: var(--ink)
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif
-  font-size: 1rem
+// Segmented control: radio buttons styled as a toggle, so nothing browser-drawn ever opens.
+.segmented
+  display: inline-flex
+  padding: .2rem
+  gap: .2rem
+  border-radius: .7rem
+  background: rgba(var(--shadow-rgb), .09)
+
+.segmented-option
+  position: relative
+  cursor: pointer
+  input
+    position: absolute
+    inset: 0
+    opacity: 0
+    margin: 0
+    cursor: pointer
+  span
+    display: block
+    min-width: 3.2rem
+    padding: .4rem .9rem
+    border-radius: .5rem
+    text-align: center
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif
+    font-weight: 600
+    color: var(--ink-soft)
+    transition: background-color .18s ease, color .18s ease, box-shadow .18s ease
+  input:checked + span
+    background: #fff
+    color: var(--ink)
+    box-shadow: 0 6px 14px -8px rgba(var(--shadow-rgb), .5)
+  input:focus-visible + span
+    box-shadow: var(--ring)
+  &:hover input:not(:checked) + span
+    color: var(--ink)
 
 // Preferences modal (react-modal drops its default styles when classNames are given).
 .prefs-overlay

@@ -2,29 +2,33 @@ import React from 'react'
 import { getAvailableLanguages, isLanguageCode, type LanguageCode } from '../lang'
 
 interface Props {
-  id: string
+  /** id of the element that labels the group. */
+  labelledBy: string
   lang: LanguageCode
   change: (lang: LanguageCode) => void
 }
 
 const LANGUAGES = getAvailableLanguages()
 
-export default function LanguageSwitch({ id, lang, change }: Props) {
+/** Two options do not need a dropdown: a segmented control shows both and never opens a browser-drawn popup. */
+export default function LanguageSwitch({ labelledBy, lang, change }: Props) {
   return (
-    <select
-      id={id}
-      className="select"
-      value={lang}
-      onChange={event => {
-        const code = event.target.value
-        if (isLanguageCode(code)) change(code)
-      }}
-    >
+    <div className="segmented" role="radiogroup" aria-labelledby={labelledBy}>
       {LANGUAGES.map(code => (
-        <option key={code} value={code}>
-          {code.toUpperCase()}
-        </option>
+        <label key={code} className="segmented-option">
+          <input
+            type="radio"
+            name="language"
+            value={code}
+            checked={lang === code}
+            onChange={event => {
+              const next = event.target.value
+              if (isLanguageCode(next)) change(next)
+            }}
+          />
+          <span>{code.toUpperCase()}</span>
+        </label>
       ))}
-    </select>
+    </div>
   )
 }

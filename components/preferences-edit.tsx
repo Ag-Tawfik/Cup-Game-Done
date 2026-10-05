@@ -80,10 +80,10 @@ export default function PreferencesEdit(props: Props) {
       </label>
 
       <div className="field">
-        <label className="field-label" htmlFor="pref-lang">
+        <span className="field-label" id="pref-lang-label">
           <span>{t('lang')}</span>
-        </label>
-        <LanguageSwitch id="pref-lang" lang={lang} change={setLang} />
+        </span>
+        <LanguageSwitch labelledBy="pref-lang-label" lang={lang} change={setLang} />
       </div>
 
       <div className="mt4 flex items-center flex-wrap" style={{ gap: '.75rem' }}>
