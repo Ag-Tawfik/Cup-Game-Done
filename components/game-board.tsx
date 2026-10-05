@@ -4,32 +4,43 @@ import { MdShuffle } from 'react-icons/md'
 
 import { t } from '../lang'
 import { asset } from '../lib/assets'
-import { SHUFFLE_ROUNDS, createCups, gbValueForCup, labelForCup, shuffleCups } from '../lib/game'
+import {
+  ballPosition,
+  beginShuffle,
+  finishReveal,
+  isWin,
+  pick,
+  settle,
+  shuffleStep,
+  startRound,
+  type RoundState
+} from '../lib/round'
+import { intervalFor, shuffleStepsFor } from '../lib/scoring'
 import Cup from './cup'
+
+export interface RoundResult {
+  won: boolean
+  /** 1-based position of the ball when the round ended. */
+  ballPosition: number
+}
 
 interface Props {
   numberOfCups: number
   shuffleIntervalMs: number
-  done: (gbValue: number) => void
+  streak: number
+  done: (result: RoundResult) => void
 }
-
-/**
- * revealing: each cup is lifted in turn so the player sees every ball (works on touch too).
- * ready:     the player may still peek by hovering, and may shuffle.
- * shuffling: cups are moving; input is ignored.
- * shuffled:  the player may pick a cup, or shuffle again.
- * resolving: a cup has been picked; the result is being shown. No further input.
- */
-type Phase = 'revealing' | 'ready' | 'shuffling' | 'shuffled' | 'resolving'
 
 interface State {
-  cups: number[]
-  openedCup: number | null
-  phase: Phase
+  round: RoundState
+  /** Position announced during the reveal, kept so the text does not change mid-shuffle. */
+  revealedPosition: number
 }
 
-const CUP_SHOWING_DURATION_MS = 1000
-const DELAY_BEFORE_RESULT_FEEDBACK_MS = 800
+const REVEAL_DURATION_MS = 1400
+const RESULT_DELAY_MS = 900
+const LOSS_SHOW_BALL_MS = 1100
+const SETTLE_FALLBACK_MS = 900
 const TITLE_LETTER_STAGGER_S = 0.05
 
 /** Letters fade in one by one; words are kept unbreakable so lines wrap between words only. */
@@ -53,10 +64,10 @@ function renderStaggeredTitle(text: string) {
 }
 
 class GameBoard extends React.Component<Props, State> {
-  state: State = {
-    cups: createCups(this.props.numberOfCups),
-    openedCup: null,
-    phase: 'revealing'
+  constructor(props: Props) {
+    super(props)
+    const round = startRound(props.numberOfCups)
+    this.state = { round, revealedPosition: ballPosition(round) }
   }
 
   private timers = new Set<ReturnType<typeof setTimeout>>()
@@ -65,7 +76,7 @@ class GameBoard extends React.Component<Props, State> {
 
   componentDidMount() {
     this.unmounted = false
-    void this.revealCups()
+    this.after(REVEAL_DURATION_MS, () => this.setState(s => ({ round: finishReveal(s.round) })))
   }
 
   componentWillUnmount() {
@@ -76,99 +87,98 @@ class GameBoard extends React.Component<Props, State> {
   }
 
   /** setTimeout that is cancelled on unmount. */
-  private wait(ms: number): Promise<void> {
-    return new Promise(resolve => {
-      const timer = setTimeout(() => {
-        this.timers.delete(timer)
-        resolve()
-      }, ms)
-      this.timers.add(timer)
-    })
-  }
-
-  private async revealCups() {
-    for (const cup of this.state.cups) {
-      if (this.unmounted) return
-      this.setState({ openedCup: cup })
-      await this.wait(CUP_SHOWING_DURATION_MS)
-    }
-    if (this.unmounted) return
-    this.setState({ openedCup: null, phase: 'ready' })
+  private after(ms: number, fn: () => void) {
+    const timer = setTimeout(() => {
+      this.timers.delete(timer)
+      if (!this.unmounted) fn()
+    }, ms)
+    this.timers.add(timer)
   }
 
   private shuffle = () => {
-    const { phase } = this.state
-    if (phase !== 'ready' && phase !== 'shuffled') return
-    this.setState({ phase: 'shuffling', openedCup: null })
+    const steps = shuffleStepsFor(this.props.streak)
+    const interval = intervalFor(this.props.shuffleIntervalMs, this.props.streak)
+    const next = beginShuffle(this.state.round, steps)
+    if (next === this.state.round) return
+    this.setState({ round: next })
 
-    let round = 0
     this.shuffleInterval = setInterval(() => {
-      this.setState(prev => ({ cups: shuffleCups(prev.cups) }))
-      round++
-      if (round >= SHUFFLE_ROUNDS && this.shuffleInterval !== null) {
-        clearInterval(this.shuffleInterval)
-        this.shuffleInterval = null
-        this.setState({ phase: 'shuffled' })
-      }
-    }, this.props.shuffleIntervalMs)
+      this.setState(
+        s => ({ round: shuffleStep(s.round) }),
+        () => {
+          if (this.state.round.phase !== 'settling') return
+          if (this.shuffleInterval !== null) clearInterval(this.shuffleInterval)
+          this.shuffleInterval = null
+          // Flipper's onComplete settles sooner; this covers reduced-motion or a skipped animation.
+          this.after(SETTLE_FALLBACK_MS, this.settle)
+        }
+      )
+    }, interval)
   }
 
-  private selectCup = async (cup: number) => {
-    // 'resolving' guards against a second pick (or a shuffle) before the round ends,
-    // which previously credited the score twice.
-    if (this.state.phase !== 'shuffled') return
-    this.setState({ phase: 'resolving', openedCup: cup })
-    await this.wait(DELAY_BEFORE_RESULT_FEEDBACK_MS)
-    if (this.unmounted) return
-    this.props.done(gbValueForCup(cup))
+  private settle = () => {
+    this.setState(s => ({ round: settle(s.round) }))
+  }
+
+  private pickCup = (cup: string) => {
+    const next = pick(this.state.round, cup)
+    if (next === this.state.round) return
+    this.setState({ round: next })
+    const won = isWin(next)
+    const position = ballPosition(next)
+    if (won) {
+      this.after(RESULT_DELAY_MS, () => this.props.done({ won, ballPosition: position }))
+      return
+    }
+    // Show the player where the ball actually was before ending the round.
+    this.after(RESULT_DELAY_MS, () => {
+      this.setState(s => ({ round: { ...s.round, openedCup: s.round.ballUnder } }))
+      this.after(LOSS_SHOW_BALL_MS, () => this.props.done({ won, ballPosition: position }))
+    })
   }
 
   public render() {
-    const { cups, openedCup, phase } = this.state
+    const { round, revealedPosition } = this.state
+    const { phase, cups, openedCup } = round
     const canPick = phase === 'shuffled'
-    const canHoverPeek = phase === 'ready'
     const canShuffle = phase === 'ready' || phase === 'shuffled'
+    const showBall = phase === 'revealing' || phase === 'resolving'
+    const status = phase === 'revealing' ? t('revealing', { POS: revealedPosition }) : t('gameRule')
 
     return (
-      <section className="relative" aria-label={t('chooseTheRightCup')}>
+      <section className="relative" aria-label={t('title')}>
         <div className="tc pa4">
-          <h2 className="fw7 lh-solid mt0 mb2 title balance" aria-label={t('chooseTheRightCup')}>
-            {renderStaggeredTitle(t('chooseTheRightCup'))}
+          <h2 className="fw7 lh-solid mt0 mb2 title balance" aria-label={t('title')}>
+            {renderStaggeredTitle(t('title'))}
           </h2>
-          <p className="rule-text ink-soft" aria-live="polite">
-            {phase === 'revealing' ? t('revealing') : t('gameRuleGeneral')}
-          </p>
+          <p className="rule-text ink-soft" aria-live="polite">{status}</p>
           <div className="mv4">
-            <Flipper flipKey={cups.join(',')}>
-              {cups.map(cup => (
-                <Flipped key={cup} flipId={String(cup)}>
-                  <div className="dib">
-                    <div className="ball-container">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={asset('/images/ball.png')} className="ball-image" alt="" />
-                      <span className="ball-label">{labelForCup(cup)}</span>
+            <Flipper flipKey={cups.join(',')} onComplete={phase === 'settling' ? this.settle : undefined}>
+              <div className="cups">
+                {cups.map((cup, index) => (
+                  <Flipped key={cup} flipId={cup}>
+                    <div className="cup-col">
+                      {showBall && cup === round.ballUnder && (
+                        <div className="ball" aria-hidden="true">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={asset('/images/ball.png')} className="ball-image" alt="" />
+                        </div>
+                      )}
+                      <div className={'cup-container' + (cup === openedCup ? ' jump' : '')}>
+                        <Cup
+                          label={t('cupLabel', { POS: index + 1, COUNT: cups.length })}
+                          select={() => this.pickCup(cup)}
+                          disabled={!canPick}
+                        />
+                      </div>
                     </div>
-                    <div
-                      className={
-                        'cup-container' +
-                        (cup === openedCup ? ' jump' : '') +
-                        (canHoverPeek ? ' can-jump-on-hover' : '')
-                      }
-                    >
-                      <Cup cupKey={cup} select={this.selectCup} disabled={!canPick} />
-                    </div>
-                  </div>
-                </Flipped>
-              ))}
+                  </Flipped>
+                ))}
+              </div>
             </Flipper>
           </div>
           <div className="mt4">
-            <button
-              type="button"
-              className="btn btn-text f3"
-              onClick={this.shuffle}
-              disabled={!canShuffle}
-            >
+            <button type="button" className="btn btn-text f3" onClick={this.shuffle} disabled={!canShuffle}>
               <MdShuffle aria-hidden="true" /> {t('shuffle')}
             </button>
           </div>

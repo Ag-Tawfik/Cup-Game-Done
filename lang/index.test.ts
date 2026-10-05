@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import en from './en'
 import tr from './tr'
-import { getAvailableLanguages, getLanguage, setLanguage, t } from './index'
+import { getAvailableLanguages, getLanguage, languageFromLocale, setLanguage, t } from './index'
 
 afterEach(() => setLanguage('en'))
 
@@ -28,12 +28,22 @@ describe('setLanguage / t', () => {
   })
 
   it('fills placeholders', () => {
-    expect(t('rightSelection', { GB: 3 })).toBe('You won 3GB!')
+    expect(t('won', { POINTS: 30 })).toBe('Found it. +30')
     setLanguage('tr')
-    expect(t('rightSelection', { GB: 5 })).toBe('5GB kazandınız!')
+    expect(t('won', { POINTS: 45 })).toBe('Buldun. +45')
   })
 
   it('leaves unknown placeholders untouched', () => {
-    expect(t('rightSelection')).toBe('You won {GB}GB!')
+    expect(t('won')).toBe('Found it. +{POINTS}')
+  })
+})
+
+describe('languageFromLocale', () => {
+  it('maps browser locales to supported languages', () => {
+    expect(languageFromLocale('tr-TR')).toBe('tr')
+    expect(languageFromLocale('TR')).toBe('tr')
+    expect(languageFromLocale('en-GB')).toBe('en')
+    expect(languageFromLocale('de-DE')).toBe('en')
+    expect(languageFromLocale(undefined)).toBe('en')
   })
 })

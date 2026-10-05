@@ -78,6 +78,10 @@ body::after
 .tabular
   font-variant-numeric: tabular-nums
 
+.ui
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif
+  font-variant-numeric: tabular-nums
+
 .word
   display: inline-block
   white-space: nowrap
@@ -164,6 +168,22 @@ button:focus-visible, select:focus-visible, input:focus-visible
 .chip-score
   top: 1rem
   right: 1rem
+  gap: .9rem
+  font-size: .95rem
+  dl
+    display: contents
+  dt
+    color: var(--ink-soft)
+    font-size: .8rem
+    text-transform: lowercase
+  dd
+    margin: 0
+    font-weight: 700
+  div
+    display: flex
+    flex-direction: column
+    align-items: flex-end
+    line-height: 1.1
 
 .chip-settings
   bottom: 1rem
@@ -190,6 +210,8 @@ input[type=range], select
   gap: 1rem
   margin-bottom: .25rem
   color: var(--ink-soft)
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif
+  font-size: .9rem
 
 .select
   width: 100%
@@ -198,8 +220,8 @@ input[type=range], select
   border-radius: .5rem
   background: #fff
   color: var(--ink)
-  font-family: inherit
-  font-size: inherit
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif
+  font-size: 1rem
 
 // Preferences modal (react-modal drops its default styles when classNames are given).
 .prefs-overlay
@@ -228,6 +250,12 @@ input[type=range], select
   transition: transform .2s ease
   &--open
     transform: none
+
+@media (max-width: 420px)
+  .chip-score
+    gap: .6rem
+    font-size: .85rem
+    padding: .4rem .7rem
 
 @media (prefers-reduced-motion: reduce)
   .rise, .fade-in

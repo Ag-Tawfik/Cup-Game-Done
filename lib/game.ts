@@ -26,7 +26,7 @@ export function labelForCup(cup: number): string {
  * Fisher-Yates shuffle that never returns the input order for two or more
  * elements, so every shuffle round visibly moves at least one cup.
  */
-export function shuffleCups(cups: readonly number[], random: RandomSource = Math.random): number[] {
+export function shuffleCups<T>(cups: readonly T[], random: RandomSource = Math.random): T[] {
   if (cups.length < 2) return [...cups]
   const result = [...cups]
   for (let attempt = 0; attempt < 10; attempt++) {
