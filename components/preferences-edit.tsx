@@ -48,7 +48,7 @@ export default function PreferencesEdit(props: Props) {
       <label className="field" htmlFor="pref-cups">
         <span className="field-label">
           <span>{t('numOfCup')}</span>
-          <strong>{numberOfCups}</strong>
+          <strong dir="ltr">{numberOfCups}</strong>
         </span>
         <input
           id="pref-cups"
@@ -65,7 +65,7 @@ export default function PreferencesEdit(props: Props) {
       <label className="field" htmlFor="pref-interval">
         <span className="field-label">
           <span>{t('shuffleInterval')}</span>
-          <strong>{shuffleIntervalMs} ms</strong>
+          <strong dir="ltr">{shuffleIntervalMs} ms</strong>
         </span>
         <input
           id="pref-interval"

@@ -19,7 +19,7 @@ const ar: Strings = {
   won: 'وجدتها. +{POINTS}',
   lost: 'كوب خاطئ. كانت الكرة تحت الكوب {POS}. تم تصفير السلسلة.',
   cupLabel: 'الكوب {POS} من {COUNT}',
-  daily: 'التحدي اليومي #{N}',
+  daily: 'التحدي اليومي رقم {N}',
   dailyIntro: 'خمس جولات، نفسها للجميع اليوم. محاولة واحدة.',
   dailyPlayed: 'لُعب اليوم',
   dailyRound: 'الجولة {ROUND} من {TOTAL}',
